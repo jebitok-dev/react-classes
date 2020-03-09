@@ -94,16 +94,20 @@ var Action = function (_React$Component2) {
 var Options = function (_React$Component3) {
     _inherits(Options, _React$Component3);
 
-    function Options() {
+    function Options(props) {
         _classCallCheck(this, Options);
 
-        return _possibleConstructorReturn(this, (Options.__proto__ || Object.getPrototypeOf(Options)).apply(this, arguments));
+        var _this3 = _possibleConstructorReturn(this, (Options.__proto__ || Object.getPrototypeOf(Options)).call(this, props));
+
+        _this3.handleRemoveAll = _this3.handleRemoveAll.bind(_this3);
+        return _this3;
     }
 
     _createClass(Options, [{
         key: 'handleRemoveAll',
         value: function handleRemoveAll() {
-            alert('remove data options');
+            console.log('remove data options');
+            console.log(this.props.options);
         }
     }, {
         key: 'render',
@@ -134,12 +138,45 @@ var Option = function Option(props) {
     );
 };
 
-var AddOption = function AddOption() {
-    return React.createElement(
-        'div',
-        null,
-        'Add Option'
-    );
-};
+var AddOption = function (_React$Component4) {
+    _inherits(AddOption, _React$Component4);
+
+    function AddOption() {
+        _classCallCheck(this, AddOption);
+
+        return _possibleConstructorReturn(this, (AddOption.__proto__ || Object.getPrototypeOf(AddOption)).apply(this, arguments));
+    }
+
+    _createClass(AddOption, [{
+        key: 'handleAddOption',
+        value: function handleAddOption(e) {
+            e.preventDefault(); //prevent from accessing a server
+            var option = e.target.elements.option.value.trim();
+            if (option) {
+                alert(option);
+            }
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return React.createElement(
+                'div',
+                null,
+                React.createElement(
+                    'form',
+                    { onSubmit: this.handleAddOption },
+                    React.createElement('input', { type: 'text', name: 'option' }),
+                    React.createElement(
+                        'button',
+                        null,
+                        'Add Option'
+                    )
+                )
+            );
+        }
+    }]);
+
+    return AddOption;
+}(React.Component);
 
 ReactDOM.render(React.createElement(TodoApp, null), document.getElementById('app'));

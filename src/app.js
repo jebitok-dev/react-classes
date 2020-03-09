@@ -36,8 +36,13 @@ class Action extends React.Component {
 //handleRemoveAll
 //remove data options
 class Options extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleRemoveAll = this.handleRemoveAll.bind(this);
+    }
     handleRemoveAll() {
-        alert('remove data options')
+        console.log('remove data options');
+        console.log(this.props.options);
     }
     render () {
         return (
@@ -55,8 +60,25 @@ const Option = (props) => (
     <div>{props.optionText}</div>
 )
 
-const AddOption = () => (
-    <div>Add Option</div>
-)
+class AddOption extends React.Component {
+    handleAddOption(e) {
+        e.preventDefault(); //prevent from accessing a server
+        const option = e.target.elements.option.value.trim();
+        if (option) {
+            alert(option);
+        }
+    }
+    render () {
+        return (
+            <div>
+                <form onSubmit={this.handleAddOption}>
+                    <input type="text" name="option"/>
+                    <button>Add Option</button>
+                </form>
+            </div>
+        )
+    }
+}
+
 
 ReactDOM.render(<TodoApp />, document.getElementById('app'));
