@@ -2,8 +2,6 @@
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -21,6 +19,7 @@ var TodoApp = function (_React$Component) {
         _this.handleDeleteOptions = _this.handleDeleteOptions.bind(_this);
         _this.handlePick = _this.handlePick.bind(_this);
         _this.handleAddOption = _this.handleAddOption.bind(_this);
+        _this.handleDeleteOption = _this.handleDeleteOption.bind(_this);
         _this.state = {
             options: []
         };
@@ -33,6 +32,17 @@ var TodoApp = function (_React$Component) {
             this.setState(function () {
                 return {
                     options: []
+                };
+            });
+        }
+    }, {
+        key: 'handleDeleteOption',
+        value: function handleDeleteOption(optionToRemove) {
+            this.setState(function (prevState) {
+                return {
+                    options: prevState.options.filter(function (option) {
+                        return optionToRemove !== option;
+                    })
                 };
             });
         }
@@ -59,30 +69,47 @@ var TodoApp = function (_React$Component) {
         }
     }, {
         key: 'componentDidUpdate',
-        value: function componentDidUpdate() {
+        value: function componentDidUpdate(prevProps, prevState) {
             console.log('saving data');
+            // localStorage.setItem('option',JSON.stringify(this.state));
+            if (prevState.options.length !== this.state.options.length) {
+                var json = JSON.stringify(this.state.options);
+                localStorage.setItem('options', json);
+            }
         }
     }, {
         key: 'componentDidMount',
         value: function componentDidMount() {
             console.log('fetching data');
+            try {
+                var data = localStorage.getItem('options');
+                var json = JSON.parse(data);
+                if (data) {
+                    this.setState(function () {
+                        json;
+                    });
+                }
+            } catch (e) {
+                console.log(e);
+            }
         }
     }, {
         key: 'render',
         value: function render() {
             var title = 'TodoApp';
-            var subtitle = 'Organize schedule';
+            var subTitle = 'Organize schedule';
             return React.createElement(
                 'div',
                 null,
-                React.createElement(Header, _defineProperty({ title: title }, 'title', subtitle)),
+                React.createElement(Header, { title: title, subTitle: subTitle }),
                 React.createElement(Action, {
                     handlePick: this.handlePick,
                     hasOptions: this.state.options.length > 0
                 }),
-                React.createElement(Options //props
-                , { options: this.state.options,
-                    handleDeleteOptions: this.handleDeleteOptions
+                React.createElement(Options, {
+                    options: this.state.options,
+                    handleDeleteOptions: this.handleDeleteOptions,
+                    handleDeleteOption: this.handleDeleteOption
                 }),
                 React.createElement(AddOption, {
                     handleAddOption: this.handleAddOption
@@ -93,6 +120,8 @@ var TodoApp = function (_React$Component) {
 
     return TodoApp;
 }(React.Component);
+
+;
 
 var Header = function Header(props) {
     return React.createElement(
@@ -106,7 +135,7 @@ var Header = function Header(props) {
         React.createElement(
             'h2',
             null,
-            props.subtitle
+            props.subTitle
         )
     );
 };
@@ -122,6 +151,10 @@ var Action = function (_React$Component2) {
 
     _createClass(Action, [{
         key: 'render',
+
+        // handlePick() {
+        //     alert("Seattle is awesome")
+        // }
         value: function render() {
             return React.createElement(
                 'div',
@@ -130,8 +163,9 @@ var Action = function (_React$Component2) {
                     'button',
                     {
                         onClick: this.props.handlePick,
-                        disabled: !this.props.hasOptions },
-                    'What should I do?'
+                        disabled: !this.props.hasOptions
+                    },
+                    'What should I do'
                 )
             );
         }
@@ -140,6 +174,11 @@ var Action = function (_React$Component2) {
     return Action;
 }(React.Component);
 
+;
+
+//handleRemoveAll
+// when click Remove data options
+
 var Options = function (_React$Component3) {
     _inherits(Options, _React$Component3);
 
@@ -147,11 +186,20 @@ var Options = function (_React$Component3) {
         _classCallCheck(this, Options);
 
         return _possibleConstructorReturn(this, (Options.__proto__ || Object.getPrototypeOf(Options)).call(this, props));
+        //this.handleRemoveAll = this.handleRemoveAll.bind(this)
     }
 
     _createClass(Options, [{
+        key: 'handleRemoveAll',
+        value: function handleRemoveAll() {
+            console.log("Remove data options");
+            // console.log(this.props.options)
+        }
+    }, {
         key: 'render',
         value: function render() {
+            var _this4 = this;
+
             return React.createElement(
                 'div',
                 null,
@@ -161,7 +209,12 @@ var Options = function (_React$Component3) {
                     'Remove All'
                 ),
                 this.props.options.map(function (option) {
-                    return React.createElement(Option, { key: option, optionText: option });
+                    return React.createElement(Option, {
+                        key: option,
+                        optionText: option,
+                        handleDeleteOption: _this4.props.handleDeleteOption
+
+                    });
                 })
             );
         }
@@ -170,11 +223,20 @@ var Options = function (_React$Component3) {
     return Options;
 }(React.Component);
 
+;
+//use this.props in class component not functional
 var Option = function Option(props) {
     return React.createElement(
         'div',
         null,
-        props.optionText
+        props.optionText,
+        React.createElement(
+            'button',
+            { onClick: function onClick() {
+                    props.handleDeleteOption(props.optionText);
+                } },
+            'remove'
+        )
     );
 };
 
@@ -184,23 +246,25 @@ var AddOption = function (_React$Component4) {
     function AddOption(props) {
         _classCallCheck(this, AddOption);
 
-        var _this4 = _possibleConstructorReturn(this, (AddOption.__proto__ || Object.getPrototypeOf(AddOption)).call(this, props));
+        var _this5 = _possibleConstructorReturn(this, (AddOption.__proto__ || Object.getPrototypeOf(AddOption)).call(this, props));
 
-        _this4.handleAddOption = _this4.handleAddOption.bind(_this4);
-        _this4.state = {
+        _this5.handleAddOption = _this5.handleAddOption.bind(_this5);
+        _this5.state = {
             error: undefined
         };
-        return _this4;
+        return _this5;
     }
 
     _createClass(AddOption, [{
         key: 'handleAddOption',
         value: function handleAddOption(e) {
-            e.preventDefault(); //prevent from accessing a server
+            e.preventDefault(); //prevent the form from checking a server
             var option = e.target.elements.option.value.trim();
             var error = this.props.handleAddOption(option);
             this.setState(function () {
-                return { error: error };
+                return {
+                    error: error
+                };
             });
             e.target.elements.option.value = '';
         }
@@ -218,7 +282,7 @@ var AddOption = function (_React$Component4) {
                 React.createElement(
                     'form',
                     { onSubmit: this.handleAddOption },
-                    React.createElement('input', { type: 'text', name: 'option' }),
+                    React.createElement('input', { type: 'text', id: 'option' }),
                     React.createElement(
                         'button',
                         null,
@@ -232,4 +296,15 @@ var AddOption = function (_React$Component4) {
     return AddOption;
 }(React.Component);
 
-ReactDOM.render(React.createElement(TodoApp, null), document.getElementById('app'));
+;
+
+// const Tick = () => (
+//     <div>
+//         <h1>Hello, world!</h1>
+//         <h2>It is { new Date().toLocaleTimeString() }.</h2>
+//     </div>
+// )
+
+// setInterval(Tick,1000);
+
+ReactDOM.render(React.createElement(TodoApp, null), document.getElementById("app"));
