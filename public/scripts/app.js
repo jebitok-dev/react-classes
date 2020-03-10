@@ -13,24 +13,51 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var TodoApp = function (_React$Component) {
     _inherits(TodoApp, _React$Component);
 
-    function TodoApp() {
+    function TodoApp(props) {
         _classCallCheck(this, TodoApp);
 
-        return _possibleConstructorReturn(this, (TodoApp.__proto__ || Object.getPrototypeOf(TodoApp)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (TodoApp.__proto__ || Object.getPrototypeOf(TodoApp)).call(this, props));
+
+        _this.handleDeleteOptions = _this.handleDeleteOptions.bind(_this);
+        _this.handlePick = _this.handlePick.bind(_this);
+        _this.state = {
+            options: ['Tokyo', 'Cairo', 'Berlin']
+        };
+        return _this;
     }
 
     _createClass(TodoApp, [{
+        key: 'handleDeleteOptions',
+        value: function handleDeleteOptions() {
+            this.setState(function () {
+                return {
+                    options: []
+                };
+            });
+        }
+    }, {
+        key: 'handlePick',
+        value: function handlePick() {
+            var random = Math.floor(Math.random() * this.state.options.length);
+            var option = this.state.options[random];
+            alert(option);
+        }
+    }, {
         key: 'render',
         value: function render() {
             var title = 'TodoApp';
             var subtitle = 'Organize schedule';
-            var options = ['Thing one', 'Thing two'];
             return React.createElement(
                 'div',
                 null,
                 React.createElement(Header, _defineProperty({ title: title }, 'title', subtitle)),
-                React.createElement(Action, null),
-                React.createElement(Options, { options: options }),
+                React.createElement(Action, {
+                    handlePick: this.handlePick
+                }),
+                React.createElement(Options //props
+                , { options: this.state.options,
+                    handleDeleteOptions: this.handleDeleteOptions
+                }),
                 React.createElement(AddOption, null)
             );
         }
@@ -66,11 +93,6 @@ var Action = function (_React$Component2) {
     }
 
     _createClass(Action, [{
-        key: 'handlePick',
-        value: function handlePick() {
-            alert('Binance is awesome');
-        }
-    }, {
         key: 'render',
         value: function render() {
             return React.createElement(
@@ -78,7 +100,7 @@ var Action = function (_React$Component2) {
                 null,
                 React.createElement(
                     'button',
-                    { onClick: this.handlePick },
+                    { onClick: this.props.handlePick },
                     'What should I do?'
                 )
             );
@@ -87,9 +109,6 @@ var Action = function (_React$Component2) {
 
     return Action;
 }(React.Component);
-//handleRemoveAll
-//remove data options
-
 
 var Options = function (_React$Component3) {
     _inherits(Options, _React$Component3);
@@ -97,19 +116,10 @@ var Options = function (_React$Component3) {
     function Options(props) {
         _classCallCheck(this, Options);
 
-        var _this3 = _possibleConstructorReturn(this, (Options.__proto__ || Object.getPrototypeOf(Options)).call(this, props));
-
-        _this3.handleRemoveAll = _this3.handleRemoveAll.bind(_this3);
-        return _this3;
+        return _possibleConstructorReturn(this, (Options.__proto__ || Object.getPrototypeOf(Options)).call(this, props));
     }
 
     _createClass(Options, [{
-        key: 'handleRemoveAll',
-        value: function handleRemoveAll() {
-            console.log('remove data options');
-            console.log(this.props.options);
-        }
-    }, {
         key: 'render',
         value: function render() {
             return React.createElement(
@@ -117,7 +127,7 @@ var Options = function (_React$Component3) {
                 null,
                 React.createElement(
                     'button',
-                    { onClick: this.handleRemoveAll },
+                    { onClick: this.props.handleDeleteOptions },
                     'Remove All'
                 ),
                 this.props.options.map(function (option) {
